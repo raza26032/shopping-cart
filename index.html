@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+      <h1>Design By: Ahmed Raza</h1>
+        <h1>Shopping Cart</h1>
+        <div id="alerts"></div>
+     <div class="productcont">
+             <div class="product">
+                 <h3 class="productname">Product 1</h3>
+                 <img src="wb_by_hemani_iconic_islamabad_eau_de_parfum_for_unisex_100ml.jpg" alt=""></h3>
+                 <p>WB By Hemani Prestigious Peshawar Eau De Parfum 100ml</p>
+                 <p class="price">RS. 1100</p>
+                 <button class="addtocart">Add To Cart</button>
+             </div>
+             <div class="product">
+                <h3 class="productname">Product 2</h3>
+                <img src="wb_by_hemani_iconic_islamabad_eau_de_parfum_for_unisex_100ml.jpg" alt=""></h3>
+                <p>WB By Hemani Prestigious Peshawar Eau De Parfum 100ml</p>
+                <p class="price">RS. 1100</p>
+                <button class="addtocart">Add To Cart</button>
+            </div>
+             <div class="product">
+                <h3 class="productname">Product 3</h3>
+                <img src="wb_by_hemani_iconic_islamabad_eau_de_parfum_for_unisex_100ml.jpg" alt=""></h3>
+                 <p>WB By Hemani Prestigious Peshawar Eau De Parfum 100ml</p>
+                 <p class="price">RS. 1100</p>
+                 <button class="addtocart">Add To Cart</button>
+             </div>
+             </div>
+             <div class="cart-container">
+               <h2>Cart</h2>
+               <table>
+                 <thead>
+                   <tr>
+                   <th><strong>Product</strong></th>
+                   <th><strong>Price</strong></th>
+                 </tr>
+                 </thead>
+                 <tbody id="carttable">
+                 </tbody>
+               </table>
+               <hr>
+               <table id="carttotals">
+                 <tr>
+                   <td><strong>Items</strong></td>
+                   <td><strong>Total</strong></td>
+                 </tr>
+                 <tr>
+                   <td>x <span id="itemsquantity">0</span></td>
+                  
+                   <td>RS.<span id="total">0</span></td>
+                 </tr></table>
+     
+                 
+               <div class="cart-buttons">  
+                 <button id="emptycart">Empty Cart</button>
+                 <button id="checkout">Checkout</button>
+               </div>
+             </div>
+     </div>
+
+     <script>
+         
+updateCartTotal();
+document.getElementById("emptycart").addEventListener("click", emptyCart);
+var btns = document.getElementsByClassName('addtocart');
+for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function() {addToCart(this);});
+}
+
+function addToCart(elem) {
+    var sibs = [];
+    var getprice;
+    var getproductName;
+    var cart = [];
+     var stringCart;
+    while(elem = elem.previousSibling) {
+        if (elem.nodeType === 3) continue;
+        if(elem.className == "price"){
+            getprice = elem.innerText;
+        }
+        if (elem.className == "productname") {
+            getproductName = elem.innerText;
+        }
+        sibs.push(elem);
+    }
+    var product = {
+        productname : getproductName,
+        price : getprice
+    };
+    var stringProduct = JSON.stringify(product);
+    
+    if(!sessionStorage.getItem('cart')){
+        cart.push(stringProduct);
+        stringCart = JSON.stringify(cart);
+        sessionStorage.setItem('cart', stringCart);
+        addedToCart(getproductName);
+        updateCartTotal();
+    }
+    else {
+       cart = JSON.parse(sessionStorage.getItem('cart'));
+        cart.push(stringProduct);
+        stringCart = JSON.stringify(cart);
+        sessionStorage.setItem('cart', stringCart);
+        addedToCart(getproductName);
+        updateCartTotal();
+    }
+}
+function updateCartTotal(){
+    var total = 0;
+    var price = 0;
+    var items = 0;
+    var productname = "";
+    var carttable = "";
+    if(sessionStorage.getItem('cart')) {
+        var cart = JSON.parse(sessionStorage.getItem('cart'));
+        items = cart.length;
+        for (var i = 0; i < items; i++){
+            var x = JSON.parse(cart[i]);
+            price = parseFloat(x.price.split('RS.')[1]);
+            productname = x.productname;
+            carttable += "<tr><td>" + productname + "</td><td>RS." + price.toFixed(2) + "</td></tr>";
+            total += price;
+        }
+        
+    }
+    document.getElementById("total").innerHTML = total.toFixed(2);
+    document.getElementById("carttable").innerHTML = carttable;
+    document.getElementById("itemsquantity").innerHTML = items;
+}
+function addedToCart(pname) {
+  var message = pname + " was added to the cart";
+  var alerts = document.getElementById("alerts");
+  alerts.innerHTML = message;
+  if(!alerts.classList.contains("message")){
+     alerts.classList.add("message");
+  }
+}
+function emptyCart() {
+    if(sessionStorage.getItem('cart')){
+        sessionStorage.removeItem('cart');
+        updateCartTotal();
+      var alerts = document.getElementById("alerts");
+      alerts.innerHTML = "";
+      if(alerts.classList.contains("message")){
+          alerts.classList.remove("message");
+      }
+    }
+}
+     </script>
+    
+</body>
+</html>
